@@ -372,6 +372,10 @@ def install_extension_from_url(dirname, url, branch_name=None):
                 shutil.move(tmpdir, target_dir)
             else:
                 # Something else, not enough free space, permissions, etc.  rethrow it so that it gets handled.
+                # Try to copy and delete, because processes like to hold on to the .git subdirectory
+                shutil.copytree(tmpdir, target_dir)
+                for i in range(1, 10): 
+                    shutil.rmtree(tmpdir, ignore_errors=True)
                 raise err
 
         import launch
